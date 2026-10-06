@@ -1,6 +1,53 @@
 const form = document.querySelector('#calculator');
 const resultBox = document.querySelector('#result');
 const errorBox = document.querySelector('#error');
+
+document.querySelectorAll('.date-control').forEach((control) => {
+  const display = control.querySelector('input[type="text"]');
+  const date = control.querySelector('input[type="date"]');
+  const pickerButton = control.querySelector('.date-picker-button');
+
+  function syncDisplay() {
+    if (!date.value) {
+      display.value = '';
+      return;
+    }
+    const [year, month, day] = date.value.split('-');
+    display.value = `${day}/${month}/${year}`;
+  }
+
+  function syncDate() {
+    const match = display.value.trim().match(/^(\d{1,2})[./-](\d{1,2})[./-](\d{4})$/);
+    date.value = '';
+    if (!match) return;
+
+    const [, dayText, monthText, yearText] = match;
+    const day = Number(dayText);
+    const month = Number(monthText);
+    const year = Number(yearText);
+    if (year < 1) return;
+    const check = new Date(0);
+    check.setUTCHours(0, 0, 0, 0);
+    check.setUTCFullYear(year, month - 1, day);
+    if (check.getUTCFullYear() !== year || check.getUTCMonth() !== month - 1 || check.getUTCDate() !== day) return;
+
+    date.value = `${yearText}-${monthText.padStart(2, '0')}-${dayText.padStart(2, '0')}`;
+    display.value = `${dayText.padStart(2, '0')}/${monthText.padStart(2, '0')}/${yearText}`;
+  }
+
+  display.addEventListener('input', syncDate);
+  display.addEventListener('blur', syncDate);
+  date.addEventListener('change', syncDisplay);
+  pickerButton.addEventListener('click', () => {
+    try {
+      if (typeof date.showPicker === 'function') date.showPicker();
+      else date.click();
+    } catch {
+      date.click();
+    }
+  });
+});
+
 function parseDate(value) {
   if (!value) return null;
   const [year, month, day] = value.split('-').map(Number);
@@ -27,9 +74,10 @@ function latestRenewal(anchor, cycle, limit) {
 }
 
 function pretty(date) {
-  return new Intl.DateTimeFormat('ka-GE', {
-    day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC',
+  const month = new Intl.DateTimeFormat('ka-GE', {
+    month: 'long', timeZone: 'UTC',
   }).format(date);
+  return `${date.getUTCDate()} ${month} ${date.getUTCFullYear()}`;
 }
 
 function compare(motherDate, fatherDate) {

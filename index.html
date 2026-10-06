@@ -98,6 +98,13 @@
     }
     input:hover { border-color: #c9c3dc; }
     input:focus { border-color: var(--purple); box-shadow: 0 0 0 4px #7054d81c; }
+    .date-control { position: relative; display: grid; grid-template-columns: 1fr 48px; }
+    .date-control input[type="text"] { min-width: 0; border-radius: 12px 0 0 12px; }
+    .date-control input[type="text"]:focus { position: relative; z-index: 1; }
+    .date-picker-button { display: grid; width: 48px; height: 49px; min-height: 0; place-items: center; margin: 0; padding: 0; border: 1px solid #e3e1eb; border-left: 0; border-radius: 0 12px 12px 0; background: #fff; box-shadow: none; color: var(--ink); font: inherit; cursor: pointer; }
+    .date-picker-button:hover { border-color: #c9c3dc; }
+    .date-picker-button:focus-visible { outline: 2px solid var(--purple); outline-offset: 2px; }
+    .date-native { position: absolute; top: 24px; right: 24px; width: 1px; height: 1px; padding: 0; border: 0; opacity: 0; }
     .divider { height: 1px; margin: 27px 0 23px; background: var(--line); }
     .wide { grid-column: 1 / -1; }
     button {
@@ -120,6 +127,7 @@
       transition: transform .15s, box-shadow .15s, background .15s;
     }
     button:hover { transform: translateY(-1px); background: linear-gradient(135deg, #6f57d9, #593fbd); box-shadow: 0 11px 22px #7054d83d; }
+    .date-picker-button:hover { transform: none; background: #fff; box-shadow: none; }
     button:focus-visible { outline: 3px solid #bba9f5; outline-offset: 3px; }
     #error { min-height: 0; margin: 0; color: #b4234d; font-size: 13px; line-height: 1.55; }
     #error:not(:empty) { margin-top: 12px; }
@@ -165,16 +173,28 @@
         <h2 class="section-heading"><span>01</span> მშობლების მონაცემები</h2>
         <div class="fields">
           <div class="field">
-            <label for="motherDob">დედის დაბადების თარიღი</label>
-            <input id="motherDob" name="motherDob" type="date" required>
+            <label for="motherDobText">დედის დაბადების თარიღი</label>
+            <div class="date-control">
+              <input id="motherDobText" type="text" inputmode="numeric" placeholder="DD/MM/YYYY" autocomplete="off" aria-label="დედის დაბადების თარიღი, დღე/თვე/წელი">
+              <button class="date-picker-button" type="button" aria-label="დედის დაბადების თარიღის კალენდრის გახსნა"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg></button>
+              <input class="date-native" id="motherDob" name="motherDob" type="date" required tabindex="-1" aria-hidden="true">
+            </div>
           </div>
           <div class="field">
-            <label for="fatherDob">მამის დაბადების თარიღი</label>
-            <input id="fatherDob" name="fatherDob" type="date" required>
+            <label for="fatherDobText">მამის დაბადების თარიღი</label>
+            <div class="date-control">
+              <input id="fatherDobText" type="text" inputmode="numeric" placeholder="DD/MM/YYYY" autocomplete="off" aria-label="მამის დაბადების თარიღი, დღე/თვე/წელი">
+              <button class="date-picker-button" type="button" aria-label="მამის დაბადების თარიღის კალენდრის გახსნა"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg></button>
+              <input class="date-native" id="fatherDob" name="fatherDob" type="date" required tabindex="-1" aria-hidden="true">
+            </div>
           </div>
           <div class="field wide">
-            <label for="conception">ჩასახვის სავარაუდო თარიღი</label>
-            <input id="conception" name="conception" type="date" required>
+            <label for="conceptionText">ჩასახვის სავარაუდო თარიღი</label>
+            <div class="date-control">
+              <input id="conceptionText" type="text" inputmode="numeric" placeholder="DD/MM/YYYY" autocomplete="off" aria-label="ჩასახვის სავარაუდო თარიღი, დღე/თვე/წელი">
+              <button class="date-picker-button" type="button" aria-label="ჩასახვის სავარაუდო თარიღის კალენდრის გახსნა"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg></button>
+              <input class="date-native" id="conception" name="conception" type="date" required tabindex="-1" aria-hidden="true">
+            </div>
             <span class="hint">თუ ზუსტი თარიღი არ იცით, მიუთითეთ მიახლოებითი.</span>
           </div>
         </div>
@@ -182,13 +202,21 @@
         <h2 class="section-heading"><span>02</span> ოპერაციის თარიღები <span class="optional">(არასავალდებულო)</span></h2>
         <div class="fields">
           <div class="field">
-            <label for="motherOperation">დედის ბოლო ოპერაციის თარიღი</label>
-            <input id="motherOperation" name="motherOperation" type="date">
+            <label for="motherOperationText">დედის ბოლო ოპერაციის თარიღი</label>
+            <div class="date-control">
+              <input id="motherOperationText" type="text" inputmode="numeric" placeholder="DD/MM/YYYY" autocomplete="off" aria-label="დედის ბოლო ოპერაციის თარიღი, დღე/თვე/წელი">
+              <button class="date-picker-button" type="button" aria-label="დედის ბოლო ოპერაციის თარიღის კალენდრის გახსნა"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg></button>
+              <input class="date-native" id="motherOperation" name="motherOperation" type="date" tabindex="-1" aria-hidden="true">
+            </div>
             <span class="hint">შეყვანისას დედის ციკლი ამ თარიღიდან დაითვლება.</span>
           </div>
           <div class="field">
-            <label for="fatherOperation">მამის ბოლო ოპერაციის თარიღი</label>
-            <input id="fatherOperation" name="fatherOperation" type="date">
+            <label for="fatherOperationText">მამის ბოლო ოპერაციის თარიღი</label>
+            <div class="date-control">
+              <input id="fatherOperationText" type="text" inputmode="numeric" placeholder="DD/MM/YYYY" autocomplete="off" aria-label="მამის ბოლო ოპერაციის თარიღი, დღე/თვე/წელი">
+              <button class="date-picker-button" type="button" aria-label="მამის ბოლო ოპერაციის თარიღის კალენდრის გახსნა"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg></button>
+              <input class="date-native" id="fatherOperation" name="fatherOperation" type="date" tabindex="-1" aria-hidden="true">
+            </div>
             <span class="hint">შეყვანისას მამის ციკლიც ამ თარიღიდან დაითვლება.</span>
           </div>
         </div>
@@ -200,5 +228,11 @@
     <footer>ეს არის სისხლის განახლების მეთოდზე დაფუძნებული მიახლოებითი გამოთვლა. შედეგი ზუსტ პასუხად ან სამედიცინო პროგნოზად არ უნდა ჩაითვალოს.</footer>
   </main>
   <script src="./app.js" defer></script>
+  <script>
+    window.va = window.va || function () {
+      (window.vaq = window.vaq || []).push(arguments);
+    };
+  </script>
+  <script defer src="/_vercel/insights/script.js"></script>
 </body>
 </html>
