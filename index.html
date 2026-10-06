@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="ka">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f6fb">
+  <title>ბავშვის სქესის კალკულატორი</title>
+  <style>
+    @font-face {
+      font-family: "FiraGO";
+      font-style: normal;
+      font-weight: 400;
+      font-display: swap;
+      src: url("./node_modules/@fontsource/firago/files/firago-latin-400-normal.woff2") format("woff2");
+    }
+    @font-face {
+      font-family: "FiraGO";
+      font-style: normal;
+      font-weight: 700;
+      font-display: swap;
+      src: url("./node_modules/@fontsource/firago/files/firago-latin-700-normal.woff2") format("woff2");
+    }
+    :root {
+      color-scheme: light;
+      font-family: "FiraGO", sans-serif;
+      font-synthesis: none;
+      --ink: #26233a;
+      --muted: #777489;
+      --purple: #7054d8;
+      --purple-dark: #5940bd;
+      --line: #e9e7f0;
+      --surface: #fff;
+      --bg: #f7f6fb;
+    }
+    * { box-sizing: border-box; }
+    body {
+      min-height: 100vh;
+      margin: 0;
+      padding: 54px 20px;
+      color: var(--ink);
+      background: radial-gradient(ellipse at 50% -8%, #eae4ff 0, transparent 43%), var(--bg);
+    }
+    .wrap { width: min(760px, 100%); margin: 0 auto; }
+    header { margin: 0 auto 28px; text-align: center; }
+    .mark {
+      display: inline-grid;
+      width: 58px;
+      height: 58px;
+      place-items: center;
+      border: 1px solid #e7e0ff;
+      border-radius: 19px;
+      background: #fff;
+      box-shadow: 0 8px 24px #5741a51a;
+      font-size: 27px;
+    }
+    h1 { margin: 15px 0 8px; font-size: clamp(26px, 5vw, 36px); letter-spacing: -.035em; }
+    header p { max-width: 560px; margin: 0 auto; color: var(--muted); line-height: 1.7; }
+    .card {
+      padding: clamp(21px, 5vw, 38px);
+      border: 1px solid #e8e5ef;
+      border-radius: 25px;
+      background: var(--surface);
+      box-shadow: 0 22px 65px #30265b12;
+    }
+    .notice {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 27px;
+      padding: 15px 17px;
+      border: 1px solid #eee8ff;
+      border-radius: 15px;
+      background: #f8f5ff;
+      color: #62577b;
+      font-size: 13px;
+      line-height: 1.65;
+    }
+    .notice-icon { flex: none; font-size: 17px; }
+    .notice strong { color: #44336f; }
+    .section-heading { display: flex; align-items: center; gap: 10px; margin: 0 0 16px; font-size: 16px; }
+    .section-heading span { display: inline-grid; width: 28px; height: 28px; place-items: center; border-radius: 9px; background: #f1edff; color: var(--purple); font-size: 13px; }
+    .fields { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 16px; }
+    .field { min-width: 0; }
+    label { display: block; margin: 0 0 8px; font-size: 13px; font-weight: 700; }
+    .optional { color: var(--muted); font-size: 11px; font-weight: 500; }
+    .hint { display: block; margin-top: 7px; color: var(--muted); font-size: 11px; line-height: 1.5; }
+    input {
+      width: 100%;
+      height: 49px;
+      padding: 0 13px;
+      border: 1px solid #e3e1eb;
+      border-radius: 12px;
+      outline: none;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    input:hover { border-color: #c9c3dc; }
+    input:focus { border-color: var(--purple); box-shadow: 0 0 0 4px #7054d81c; }
+    .divider { height: 1px; margin: 27px 0 23px; background: var(--line); }
+    .wide { grid-column: 1 / -1; }
+    button {
+      display: flex;
+      width: 100%;
+      min-height: 53px;
+      justify-content: center;
+      align-items: center;
+      gap: 9px;
+      margin-top: 23px;
+      padding: 12px 18px;
+      border: 0;
+      border-radius: 13px;
+      background: linear-gradient(135deg, #7861e5, #6448cf);
+      box-shadow: 0 8px 18px #7054d82e;
+      color: #fff;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform .15s, box-shadow .15s, background .15s;
+    }
+    button:hover { transform: translateY(-1px); background: linear-gradient(135deg, #6f57d9, #593fbd); box-shadow: 0 11px 22px #7054d83d; }
+    button:focus-visible { outline: 3px solid #bba9f5; outline-offset: 3px; }
+    #error { min-height: 0; margin: 0; color: #b4234d; font-size: 13px; line-height: 1.55; }
+    #error:not(:empty) { margin-top: 12px; }
+    #result { display: none; margin-top: 24px; padding: clamp(18px, 4vw, 25px); border: 1px solid var(--line); border-radius: 18px; background: #fcfbfe; }
+    #result.show { display: block; animation: appear .22s ease-out; }
+    @keyframes appear { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+    .result-title { margin: 0 0 6px; font-size: 20px; letter-spacing: -.02em; }
+    .result-sub { margin: 0 0 18px; color: var(--muted); font-size: 12px; line-height: 1.65; }
+    .outcomes { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .outcome { padding: 16px; border: 1px solid transparent; border-radius: 14px; }
+    .outcome.girl { border-color: #f5dce9; background: #fff5fa; }
+    .outcome.boy { border-color: #dce9f8; background: #f3f8ff; }
+    .outcome small { display: block; color: #686176; font-size: 11px; }
+    .outcome strong { display: block; margin-top: 3px; font-size: 23px; }
+    .details { margin-top: 19px; padding-top: 16px; border-top: 1px solid var(--line); }
+    .details h3 { margin: 0 0 8px; font-size: 13px; }
+    .details p { margin: 6px 0; color: #625e70; font-size: 12px; line-height: 1.65; }
+    .result-disclaimer { margin: 15px 0 0; color: var(--muted); font-size: 10px; line-height: 1.6; }
+    footer { max-width: 640px; margin: 20px auto 0; color: var(--muted); text-align: center; font-size: 11px; line-height: 1.65; }
+    @media (max-width: 560px) {
+      body { padding: 30px 13px; }
+      .fields { grid-template-columns: 1fr; gap: 15px; }
+      .wide { grid-column: auto; }
+      .divider { margin: 22px 0 20px; }
+      .card { border-radius: 20px; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; } }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header>
+      <div class="mark" aria-hidden="true">🍼</div>
+      <h1>ბავშვის სქესის კალკულატორი</h1>
+      <p>შეიყვანეთ მშობლების დაბადებისა და ჩასახვის თარიღები. სურვილის შემთხვევაში მიუთითეთ ოპერაციის თარიღებიც და მიიღეთ სისხლის განახლების მეთოდით გამოთვლილი ვარაუდი.</p>
+    </header>
+    <section class="card" aria-label="კალკულატორი">
+      <div class="notice" role="note">
+        <span class="notice-icon" aria-hidden="true">ⓘ</span>
+        <div><strong>გამოთვლის შესახებ:</strong> კალკულატორი სისხლის განახლების მეთოდს იყენებს და ამ წესით მიღებულ სავარაუდო შედეგს გიჩვენებთ. მეთოდის სიზუსტე მეცნიერულად დადასტურებული არ არის; პროცენტები გამოთვლის მოდელს ასახავს და არა დადასტურებულ ალბათობას.</div>
+      </div>
+      <form id="calculator" novalidate>
+        <h2 class="section-heading"><span>01</span> მშობლების მონაცემები</h2>
+        <div class="fields">
+          <div class="field">
+            <label for="motherDob">დედის დაბადების თარიღი</label>
+            <input id="motherDob" name="motherDob" type="date" required>
+          </div>
+          <div class="field">
+            <label for="fatherDob">მამის დაბადების თარიღი</label>
+            <input id="fatherDob" name="fatherDob" type="date" required>
+          </div>
+          <div class="field wide">
+            <label for="conception">ჩასახვის სავარაუდო თარიღი</label>
+            <input id="conception" name="conception" type="date" required>
+            <span class="hint">თუ ზუსტი თარიღი არ იცით, მიუთითეთ მიახლოებითი.</span>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <h2 class="section-heading"><span>02</span> ოპერაციის თარიღები <span class="optional">(არასავალდებულო)</span></h2>
+        <div class="fields">
+          <div class="field">
+            <label for="motherOperation">დედის ბოლო ოპერაციის თარიღი</label>
+            <input id="motherOperation" name="motherOperation" type="date">
+            <span class="hint">შეყვანისას დედის ციკლი ამ თარიღიდან დაითვლება.</span>
+          </div>
+          <div class="field">
+            <label for="fatherOperation">მამის ბოლო ოპერაციის თარიღი</label>
+            <input id="fatherOperation" name="fatherOperation" type="date">
+            <span class="hint">შეყვანისას მამის ციკლიც ამ თარიღიდან დაითვლება.</span>
+          </div>
+        </div>
+        <p id="error" role="alert" aria-live="polite"></p>
+        <button type="submit">გამოთვლა <span aria-hidden="true">→</span></button>
+      </form>
+      <section id="result" aria-live="polite" aria-atomic="true"></section>
+    </section>
+    <footer>ეს არის სისხლის განახლების მეთოდზე დაფუძნებული მიახლოებითი გამოთვლა. შედეგი ზუსტ პასუხად ან სამედიცინო პროგნოზად არ უნდა ჩაითვალოს.</footer>
+  </main>
+  <script src="./app.js" defer></script>
+</body>
+</html>
