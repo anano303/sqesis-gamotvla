@@ -17,7 +17,21 @@ document.querySelectorAll('.date-control').forEach((control) => {
   }
 
   function syncDate() {
-    const match = display.value.trim().match(/^(\d{1,2})[./-](\d{1,2})[./-](\d{4})$/);
+    const caret = display.selectionStart ?? display.value.length;
+    const digitsBeforeCaret = display.value.slice(0, caret).replace(/\D/g, '').length;
+    const digits = display.value.replace(/\D/g, '').slice(0, 8);
+    let formatted = digits;
+    if (digits.length >= 2) {
+      formatted = `${digits.slice(0, 2)}/${digits.slice(2, 4)}`;
+      if (digits.length >= 4) formatted += `/${digits.slice(4)}`;
+    }
+    if (display.value !== formatted) {
+      display.value = formatted;
+      const nextCaret = digitsBeforeCaret + Number(digitsBeforeCaret >= 2) + Number(digitsBeforeCaret >= 4);
+      display.setSelectionRange(nextCaret, nextCaret);
+    }
+
+    const match = display.value.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
     date.value = '';
     if (!match) return;
 
